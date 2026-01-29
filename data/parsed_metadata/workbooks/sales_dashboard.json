@@ -1,0 +1,95 @@
+{
+  "dashboard_name": "sales_dashboard",
+  "type": "workbook",
+  "datasources": [
+    {
+      "name": "Sample-Superstore",
+      "caption": "Sales Data",
+      "inline": "true",
+      "connection": {
+        "class": "sqlserver",
+        "server": "sql-server-01.db.com",
+        "dbname": "SalesDB",
+        "schema": "dbo",
+        "username": "sales_user",
+        "authentication": null
+      }
+    }
+  ],
+  "calculated_fields": [
+    {
+      "name": "Profit Margin",
+      "internal_name": "[Calculated_Profit_Margin]",
+      "formula": "[Profit] / [Sales]",
+      "datatype": "real",
+      "role": "measure",
+      "type": "quantitative"
+    },
+    {
+      "name": "YTD Sales",
+      "internal_name": "[Calculated_YTD_Sales]",
+      "formula": "SUM(IF [Order Date] &lt;= TODAY() THEN [Sales] END)",
+      "datatype": "real",
+      "role": "measure",
+      "type": "quantitative"
+    },
+    {
+      "name": "Sales Category",
+      "internal_name": "[Calculated_Sales_Category]",
+      "formula": "IF [Sales] &gt; 10000 THEN \"High\" ELSEIF [Sales] &gt; 5000 THEN \"Medium\" ELSE \"Low\" END",
+      "datatype": "string",
+      "role": "dimension",
+      "type": "nominal"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "Date Range Start",
+      "caption": "Start Date",
+      "datatype": "date",
+      "value": "#2025-01-01#",
+      "alias": ""
+    },
+    {
+      "name": "Date Range End",
+      "caption": "End Date",
+      "datatype": "date",
+      "value": "#2025-12-31#",
+      "alias": ""
+    },
+    {
+      "name": "Region Filter",
+      "caption": "Select Region",
+      "datatype": "string",
+      "value": "All",
+      "alias": ""
+    }
+  ],
+  "filters": [
+    {
+      "column": "[Region]",
+      "class": "categorical",
+      "field": ""
+    },
+    {
+      "column": "[Order Date]",
+      "class": "quantitative",
+      "field": ""
+    }
+  ],
+  "joins": [
+    {
+      "join_type": "inner",
+      "connection": "sqlserver",
+      "tables": {
+        "left": "[dbo].[Orders]",
+        "right": "[dbo].[Customers]"
+      },
+      "condition": "[Orders].[CustomerID] = [Customers].[CustomerID]"
+    }
+  ],
+  "metadata": {
+    "source_file": "sample_workbook.twb",
+    "workbook_version": "18.1"
+  }
+}

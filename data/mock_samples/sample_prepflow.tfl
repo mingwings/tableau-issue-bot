@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<datasource formatted-name="Customer Analysis Flow" inline="true" version="18.1">
+  <process>
+    <node type="input" name="Customer Data" id="node1">
+      <connection class="sqlserver" server="sql-server-01.db.com" dbname="CRM_DB" schema="dbo" table-name="Customers"/>
+    </node>
+    <node type="input" name="Order Data" id="node2">
+      <connection class="sqlserver" server="sql-server-01.db.com" dbname="SalesDB" schema="dbo" table-name="Orders"/>
+    </node>
+    <node type="clean" name="Clean Customer Names" id="node3" input="node1">
+      <operation type="remove-nulls" field="CustomerName"/>
+    </node>
+    <node type="join" name="Join Customer and Orders" id="node4" join-type="left">
+      <input source="node3" alias="Customers"/>
+      <input source="node2" alias="Orders"/>
+      <join-conditions>
+        <join-clause left-field="CustomerID" right-field="CustomerID" operator="=" left-source="Customers" right-source="Orders"/>
+      </join-conditions>
+    </node>
+    <node type="aggregate" name="Calculate Customer Totals" id="node5" input="node4">
+      <groupby>
+        <field name="CustomerID"/>
+        <field name="CustomerName"/>
+      </groupby>
+      <aggregations>
+        <field name="TotalSales" calculation="SUM" source-field="Sales"/>
+        <field name="OrderCount" calculation="COUNT" source-field="OrderID"/>
+      </aggregations>
+    </node>
+    <node type="filter" name="Filter High Value Customers" id="node6" input="node5">
+      <condition field="TotalSales" operator="greater-than" value="10000"/>
+    </node>
+    <node type="output" name="Customer Summary Output" id="node7" input="node6">
+      <connection class="hyper" dbname="CustomerSummary.hyper" schema="Extract" table-name="CustomerMetrics"/>
+    </node>
+  </process>
+</datasource>

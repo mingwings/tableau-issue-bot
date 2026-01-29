@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<workbook xmlns:user="http://www.tableausoftware.com/xml/user" source-build="2023.1.0" version="18.1">
+  <datasources>
+    <datasource name="Sample-Superstore" caption="Sales Data" inline="true">
+      <connection class="sqlserver" dbname="SalesDB" server="sql-server-01.db.com" schema="dbo" username="sales_user"/>
+      <column caption="Profit Margin" datatype="real" name="[Calculated_Profit_Margin]" role="measure" type="quantitative">
+        <calculation formula="[Profit] / [Sales]" class="tableau"/>
+      </column>
+      <column caption="YTD Sales" datatype="real" name="[Calculated_YTD_Sales]" role="measure" type="quantitative">
+        <calculation formula="SUM(IF [Order Date] &amp;lt;= TODAY() THEN [Sales] END)" class="tableau"/>
+      </column>
+      <column caption="Sales Category" datatype="string" name="[Calculated_Sales_Category]" role="dimension" type="nominal">
+        <calculation formula="IF [Sales] &amp;gt; 10000 THEN &quot;High&quot; ELSEIF [Sales] &amp;gt; 5000 THEN &quot;Medium&quot; ELSE &quot;Low&quot; END" class="tableau"/>
+      </column>
+      <relation type="join" join="inner" connection="sqlserver">
+        <relation type="table" table="[dbo].[Orders]" name="Orders"/>
+        <relation type="table" table="[dbo].[Customers]" name="Customers"/>
+        <clause type="join" expression="[Orders].[CustomerID] = [Customers].[CustomerID]"/>
+      </relation>
+    </datasource>
+  </datasources>
+  <parameter name="Date Range Start" type="date" value="#2025-01-01#" caption="Start Date"/>
+  <parameter name="Date Range End" type="date" value="#2025-12-31#" caption="End Date"/>
+  <parameter name="Region Filter" type="string" value="All" caption="Select Region"/>
+  <worksheets>
+    <worksheet name="Sales Overview">
+      <filter column="[Region]" class="categorical"/>
+      <filter column="[Order Date]" class="quantitative"/>
+    </worksheet>
+  </worksheets>
+</workbook>

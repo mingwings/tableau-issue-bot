@@ -1,0 +1,20 @@
+{
+  "dashboards": [
+    {
+      "name": "sales_dashboard",
+      "display_name": "Q4 Sales Dashboard",
+      "type": "workbook",
+      "description": "Quarterly sales performance tracking with profit margins and YTD metrics",
+      "owner": "Sales Analytics Team",
+      "source_file": "sample_workbook.twb"
+    },
+    {
+      "name": "customer_prep_flow",
+      "display_name": "Customer Data Prep Flow",
+      "type": "prep_flow",
+      "description": "ETL flow for customer data consolidation and analysis",
+      "owner": "Data Engineering Team",
+      "source_file": "sample_prepflow.tfl"
+    }
+  ]
+}

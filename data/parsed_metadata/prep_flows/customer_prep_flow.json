@@ -1,0 +1,151 @@
+{
+  "flow_name": "customer_prep_flow",
+  "type": "prep_flow",
+  "input_sources": [
+    {
+      "id": "node1",
+      "name": "Customer Data",
+      "connection": {
+        "class": "sqlserver",
+        "server": "sql-server-01.db.com",
+        "dbname": "CRM_DB",
+        "schema": "dbo",
+        "table": "Customers"
+      }
+    },
+    {
+      "id": "node2",
+      "name": "Order Data",
+      "connection": {
+        "class": "sqlserver",
+        "server": "sql-server-01.db.com",
+        "dbname": "SalesDB",
+        "schema": "dbo",
+        "table": "Orders"
+      }
+    }
+  ],
+  "steps": [
+    {
+      "step_number": 1,
+      "type": "input",
+      "id": "node1",
+      "name": "Customer Data",
+      "input_source": "",
+      "description": ""
+    },
+    {
+      "step_number": 2,
+      "type": "input",
+      "id": "node2",
+      "name": "Order Data",
+      "input_source": "",
+      "description": ""
+    },
+    {
+      "step_number": 3,
+      "type": "clean",
+      "id": "node3",
+      "name": "Clean Customer Names",
+      "input_source": "node1",
+      "description": "",
+      "operation": {
+        "type": "remove-nulls",
+        "field": "CustomerName"
+      }
+    },
+    {
+      "step_number": 4,
+      "type": "join",
+      "id": "node4",
+      "name": "Join Customer and Orders",
+      "input_source": "",
+      "description": "",
+      "join_type": "left"
+    },
+    {
+      "step_number": 5,
+      "type": "aggregate",
+      "id": "node5",
+      "name": "Calculate Customer Totals",
+      "input_source": "node4",
+      "description": "",
+      "aggregations": [
+        {
+          "name": "TotalSales",
+          "calculation": "SUM",
+          "source_field": "Sales"
+        },
+        {
+          "name": "OrderCount",
+          "calculation": "COUNT",
+          "source_field": "OrderID"
+        }
+      ]
+    },
+    {
+      "step_number": 6,
+      "type": "filter",
+      "id": "node6",
+      "name": "Filter High Value Customers",
+      "input_source": "node5",
+      "description": "",
+      "condition": {
+        "field": "TotalSales",
+        "operator": "greater-than",
+        "value": "10000"
+      }
+    },
+    {
+      "step_number": 7,
+      "type": "output",
+      "id": "node7",
+      "name": "Customer Summary Output",
+      "input_source": "node6",
+      "description": ""
+    }
+  ],
+  "joins": [
+    {
+      "id": "node4",
+      "name": "Join Customer and Orders",
+      "join_type": "left",
+      "inputs": {
+        "left": {
+          "source": "node3",
+          "alias": "Customers"
+        },
+        "right": {
+          "source": "node2",
+          "alias": "Orders"
+        }
+      },
+      "conditions": [
+        {
+          "left_field": "CustomerID",
+          "right_field": "CustomerID",
+          "operator": "=",
+          "left_source": "Customers",
+          "right_source": "Orders"
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "id": "node7",
+      "name": "Customer Summary Output",
+      "input_source": "node6",
+      "connection": {
+        "class": "hyper",
+        "dbname": "CustomerSummary.hyper",
+        "schema": "Extract",
+        "table": "CustomerMetrics"
+      }
+    }
+  ],
+  "metadata": {
+    "source_file": "sample_prepflow.tfl",
+    "flow_version": "18.1"
+  }
+}
