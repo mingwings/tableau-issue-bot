@@ -62,11 +62,11 @@ def initialize_components():
             st.session_state.feedback_logger = FeedbackLogger()
 
         # Initialize LLM adapter
-        with st.spinner("Connecting to dbLLM..."):
+        with st.spinner("Connecting to LLM..."):
             st.session_state.llm_adapter = LLMAdapterFactory.create_adapter()
 
             if not st.session_state.llm_adapter.validate_connection():
-                st.error("Failed to connect to dbLLM. Please check your API credentials in .env file.")
+                st.error("Failed to connect to LLM. Please check your API credentials in .env file.")
                 st.stop()
 
         st.session_state.initialization_complete = True
@@ -266,7 +266,7 @@ def main():
 
     # Footer
     st.markdown("---")
-    st.caption("Powered by dbLLM | Built for Deutsche Bank Internal Use")
+    st.caption("Powered by LLM | Built for Internal Use")
 
 
 if __name__ == '__main__':

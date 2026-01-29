@@ -7,7 +7,7 @@ AI-powered troubleshooting assistant for Tableau Dashboards and Prep Flows, buil
 This chatbot helps users diagnose and resolve issues with Tableau dashboards and Prep flows by:
 - Analyzing pre-parsed Tableau metadata (data sources, calculated fields, joins, parameters, etc.)
 - Referencing historical issues and their resolutions
-- Providing contextual troubleshooting guidance using dbLLM
+- Providing contextual troubleshooting guidance using LLM
 
 ## Features
 
@@ -15,7 +15,7 @@ This chatbot helps users diagnose and resolve issues with Tableau dashboards and
 - **Conversational Interface**: Streamlit-based chat UI for natural troubleshooting conversations
 - **Historical Learning**: References past issues and resolutions specific to each dashboard
 - **Feedback System**: Tracks resolution rates and user satisfaction
-- **Flexible LLM Integration**: Supports multiple API formats for dbLLM connectivity
+- **Flexible LLM Integration**: Supports multiple API formats for LLM connectivity
 
 ## Quick Start
 
@@ -37,13 +37,13 @@ Copy the example environment file and configure with your credentials:
 cp .env.example .env
 ```
 
-Edit `.env` with your dbLLM credentials:
+Edit `.env` with your LLM credentials:
 
 ```env
 EMAIL_ACC=your.email@db.com
-DB_LLM_API_KEY=your_api_key_here
-DB_LLM_API_URL=https://api.uat1.mlcore.uat.gcp.db.com/api/llm/process
-DB_LLM_MODEL=gemini-2.5-flash
+LLM_API_KEY=your_api_key_here
+LLM_API_URL=https://api.uat1.mlcore.uat.gcp.db.com/api/llm/process
+LLM_MODEL=gemini-2.5-flash
 KANNON_ID=2010.045
 ```
 
@@ -94,7 +94,7 @@ tableau-chatbot/
 │   ├── workbook_parser.py        # Extract from .twb/.twbx files
 │   └── prep_flow_parser.py       # Extract from .tfl/.tflx files
 ├── core/
-│   ├── llm_adapter.py            # Flexible dbLLM integration
+│   ├── llm_adapter.py            # Flexible LLM integration
 │   ├── context_manager.py        # Load & combine contexts
 │   ├── prompt_builder.py         # Construct prompts
 │   └── feedback_logger.py        # Log user feedback
@@ -181,10 +181,10 @@ MAX_CHAT_HISTORY=4         # Number of previous exchanges to remember
 
 ### LLM Connection Failed
 
-**Problem:** "Failed to connect to dbLLM"
+**Problem:** "Failed to connect to LLM"
 
 **Solution:**
-1. Verify `DB_LLM_API_KEY` and `DB_LLM_API_URL` are correct in `.env`
+1. Verify `LLM_API_KEY` and `LLM_API_URL` are correct in `.env`
 2. Check network connectivity to the API endpoint
 3. Ensure `EMAIL_ACC` matches your Deutsche Bank email
 
@@ -268,8 +268,8 @@ python core/feedback_logger.py
    - Set Python version: 3.9+
 
 3. **Configure Secrets:**
-   - Add `DB_LLM_API_KEY` to DaS secrets
-   - Add `DB_LLM_API_URL` to DaS secrets
+   - Add `LLM_API_KEY` to DaS secrets
+   - Add `LLM_API_URL` to DaS secrets
    - Add `EMAIL_ACC` to DaS secrets
    - Add `KANNON_ID` to DaS secrets
 
@@ -322,7 +322,7 @@ for issue in unresolved:
 2. **User asks question** → Triggers context retrieval
 3. **Context Manager** → Loads metadata JSON + filters historical issues
 4. **Prompt Builder** → Combines system prompt + context + user query
-5. **LLM Adapter** → Sends to dbLLM API
+5. **LLM Adapter** → Sends to LLM API
 6. **Response displayed** → Shows in chat interface
 7. **User provides feedback** → Logs to SQLite database
 

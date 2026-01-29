@@ -1,5 +1,5 @@
 """
-Flexible dbLLM Adapter supporting multiple API formats
+Flexible LLM Adapter supporting multiple API formats
 Supports: OpenAI-compatible, Custom REST API, Python SDK
 """
 
@@ -28,21 +28,21 @@ class BaseLLMAdapter(ABC):
 
 
 class OpenAICompatibleAdapter(BaseLLMAdapter):
-    """For OpenAI-compatible APIs (dbLLM format based on AI Tutor pattern)"""
+    """For OpenAI-compatible APIs (LLM format based on AI Tutor pattern)"""
 
     def __init__(self):
-        self.api_key = os.getenv('DB_LLM_API_KEY')
-        self.api_url = os.getenv('DB_LLM_API_URL')
-        self.model_name = os.getenv('DB_LLM_MODEL', 'gemini-2.5-flash')
+        self.api_key = os.getenv('LLM_API_KEY')
+        self.api_url = os.getenv('LLM_API_URL')
+        self.model_name = os.getenv('LLM_MODEL', 'gemini-2.5-flash')
         self.email = os.getenv('EMAIL_ACC')
         self.kannon_id = os.getenv('KANNON_ID', '2010.045')
 
         if not all([self.api_key, self.api_url, self.email]):
-            raise ValueError("Missing required environment variables: DB_LLM_API_KEY, DB_LLM_API_URL, EMAIL_ACC")
+            raise ValueError("Missing required environment variables: LLM_API_KEY, LLM_API_URL, EMAIL_ACC")
 
     def generate(self, prompt: str, stream: bool = False, **kwargs) -> str:
         """
-        Generate response using dbLLM OpenAI-compatible endpoint
+        Generate response using LLM OpenAI-compatible endpoint
 
         Args:
             prompt: The user prompt/message
@@ -86,12 +86,12 @@ class OpenAICompatibleAdapter(BaseLLMAdapter):
             response.raise_for_status()
             return response.text
         except requests.exceptions.Timeout:
-            raise ConnectionError("dbLLM API request timed out after 60 seconds")
+            raise ConnectionError("LLM API request timed out after 60 seconds")
         except requests.exceptions.RequestException as e:
-            raise ConnectionError(f"dbLLM API request failed: {e}")
+            raise ConnectionError(f"LLM API request failed: {e}")
 
     def validate_connection(self) -> bool:
-        """Test connection to dbLLM"""
+        """Test connection to LLM"""
         try:
             test_response = self.generate(
                 "Hello",
@@ -108,11 +108,11 @@ class CustomAPIAdapter(BaseLLMAdapter):
     """Fallback for custom REST API format"""
 
     def __init__(self):
-        self.api_key = os.getenv('DB_LLM_API_KEY')
-        self.api_url = os.getenv('DB_LLM_API_URL')
+        self.api_key = os.getenv('LLM_API_KEY')
+        self.api_url = os.getenv('LLM_API_URL')
 
         if not all([self.api_key, self.api_url]):
-            raise ValueError("Missing required environment variables: DB_LLM_API_KEY, DB_LLM_API_URL")
+            raise ValueError("Missing required environment variables: LLM_API_KEY, LLM_API_URL")
 
     def generate(self, prompt: str, stream: bool = False, **kwargs) -> str:
         """Custom API implementation"""
@@ -145,9 +145,9 @@ class PythonSDKAdapter(BaseLLMAdapter):
 
     def __init__(self):
         try:
-            # Placeholder for potential dbLLM SDK
-            # import dbllm
-            # self.client = dbllm.Client(api_key=os.getenv('DB_LLM_API_KEY'))
+            # Placeholder for potential LLM SDK
+            # import llm
+            # self.client = llm.Client(api_key=os.getenv('LLM_API_KEY'))
             raise ImportError("SDK not installed")
         except ImportError:
             raise NotImplementedError("Python SDK not available. Use OpenAI-compatible or Custom adapter.")
@@ -181,9 +181,9 @@ class LLMAdapterFactory:
 
         if env_adapter_type == 'auto':
             # Auto-detect based on environment
-            if os.getenv('DB_LLM_SDK_AVAILABLE') == 'true':
+            if os.getenv('LLM_SDK_AVAILABLE') == 'true':
                 adapter_type = 'sdk'
-            elif os.getenv('DB_LLM_API_TYPE') == 'custom':
+            elif os.getenv('LLM_API_TYPE') == 'custom':
                 adapter_type = 'custom'
             else:
                 adapter_type = 'openai'

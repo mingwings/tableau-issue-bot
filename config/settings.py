@@ -29,10 +29,10 @@ SETTINGS = {
     'LLM_MAX_TOKENS': int(os.getenv('LLM_MAX_TOKENS', '2048')),
     'LLM_TOP_P': float(os.getenv('LLM_TOP_P', '0.95')),
 
-    # dbLLM API settings
-    'DB_LLM_API_KEY': os.getenv('DB_LLM_API_KEY'),
-    'DB_LLM_API_URL': os.getenv('DB_LLM_API_URL'),
-    'DB_LLM_MODEL': os.getenv('DB_LLM_MODEL', 'gemini-2.5-flash'),
+    # LLM API settings
+    'LLM_API_KEY': os.getenv('LLM_API_KEY'),
+    'LLM_API_URL': os.getenv('LLM_API_URL'),
+    'LLM_MODEL': os.getenv('LLM_MODEL', 'gemini-2.5-flash'),
     'EMAIL_ACC': os.getenv('EMAIL_ACC'),
     'KANNON_ID': os.getenv('KANNON_ID', '2010.045'),
 
@@ -64,8 +64,8 @@ def validate_settings() -> bool:
         True if all required settings are valid, False otherwise
     """
     required_vars = [
-        'DB_LLM_API_KEY',
-        'DB_LLM_API_URL',
+        'LLM_API_KEY',
+        'LLM_API_URL',
         'EMAIL_ACC'
     ]
 
